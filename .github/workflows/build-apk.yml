@@ -24,10 +24,9 @@ jobs:
 
     - name: Generate Android Project Files
       run: |
-        # إنشاء المجلدات المطلوبة
         mkdir -p app/src/main/java/com/fleetdz/gps
-        
-        # 1. ملف settings.gradle
+        # ... (أبقِ جميع أوامر cat التي تنشئ الملفات كما هي دون تغيير) ...
+        # 1. settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
             repositories {
@@ -47,14 +46,14 @@ jobs:
         include ':app'
         EOF
 
-        # 2. ملف build.gradle الرئيسي
+        # 2. build.gradle (Project)
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.2.2' apply false
         }
         EOF
 
-        # 3. ملف app/build.gradle
+        # 3. app/build.gradle
         cat << 'EOF' > app/build.gradle
         plugins {
             id 'com.android.application'
@@ -84,7 +83,7 @@ jobs:
         }
         EOF
 
-        # 4. ملف AndroidManifest.xml
+        # 4. AndroidManifest.xml
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -106,7 +105,7 @@ jobs:
         </manifest>
         EOF
 
-        # 5. ملف MainActivity.java (كود التطبيق)
+        # 5. MainActivity.java
         cat << 'EOF' > app/src/main/java/com/fleetdz/gps/MainActivity.java
         package com.fleetdz.gps;
         import android.annotation.SuppressLint;
@@ -149,8 +148,11 @@ jobs:
         }
         EOF
 
-    - name: Build APK
-      run: gradle assembleDebug
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper --gradle-version 8.5
+
+    - name: Build APK with Gradle Wrapper
+      run: ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
