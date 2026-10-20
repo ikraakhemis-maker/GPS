@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -73,7 +74,20 @@ public class MainActivity extends AppCompatActivity {
         s.setDisplayZoomControls(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
 
+
         webView.setWebChromeClient(new WebChromeClient() {
+            // الموقع يعرض تنبيه "Il faut mettre à jour votre navigateur" داخل WebView
+            // (كانت النسخة القديمة تتجاهله لأنها بلا WebChromeClient). نتجاهله هنا فقط،
+            // وتبقى بقية تنبيهات الموقع ظاهرة.
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                if (message != null && message.toLowerCase().contains("mettre à jour votre navigateur")) {
+                    result.confirm();
+                    return true;
+                }
+                return super.onJsAlert(view, url, message, result);
+            }
+
             @Override
             public void onProgressChanged(WebView view, int p) {
                 progress.setProgress(p);
